@@ -67,8 +67,8 @@ class LibWrapper {
       requireBundle = ManifestUtils.mergeRequireBundle(requireBundle, wrappedLibConfig.requiredBundles.join(','))
     }
     m.attributes.remove 'Import-Package'
-    if(packages)
-      m.attributes 'Import-Package': ManifestUtils.packagesToString(packages)
+//    if(packages)
+//      m.attributes 'Import-Package': ManifestUtils.packagesToString(packages)
     m.attributes.remove 'Require-Bundle'
     if(requireBundle)
       m.attributes 'Require-Bundle': requireBundle
