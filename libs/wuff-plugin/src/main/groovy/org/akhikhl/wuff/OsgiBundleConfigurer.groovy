@@ -52,10 +52,17 @@ class OsgiBundleConfigurer extends JavaConfigurer {
         if(proj) {
           project.dependencies.add 'compile', proj
         } else {
-          if(bundleVersion)
-            project.dependencies.add 'compile', "${project.ext.eclipseMavenGroup}:$bundleName:$bundleVersion"
-          else
+//          if(bundleVersion)
+//            project.dependencies.add 'compile', "${project.ext.eclipseMavenGroup}:$bundleName:$bundleVersion"
+//          else
             project.dependencies.add 'compile', "${project.ext.eclipseMavenGroup}:$bundleName:+"
+        }
+      }
+    }
+    userManifest?.mainAttributes?.getValue('Bundle-ClassPath')?.split(',')?.each { jar ->
+      if (jar.endsWith(".jar")) {
+        if (project.file(jar).exists()) {
+          project.dependencies.add 'compile', project.files(jar)
         }
       }
     }
@@ -151,6 +158,8 @@ class OsgiBundleConfigurer extends JavaConfigurer {
 
     project.tasks.jar { thisTask ->
 
+      project.setVersion(project.version.replace('-SNAPSHOT', snapshotQualifier))
+
       dependsOn { project.tasks.createOsgiManifest }
 
       inputs.files { PluginUtils.getGeneratedManifestFile(project) }
@@ -175,7 +184,7 @@ class OsgiBundleConfigurer extends JavaConfigurer {
       manifest {
 
         setName(project.name)
-        setVersion(project.version.replace('-SNAPSHOT', snapshotQualifier))
+        setVersion(project.version)
 
         def templateEngine
 
@@ -197,6 +206,10 @@ class OsgiBundleConfigurer extends JavaConfigurer {
               newValue = ManifestUtils.mergePackageList(details.baseValue, mergeValue)
             } else if(details.key.equalsIgnoreCase('Import-Package')) {
               newValue = ManifestUtils.mergePackageList(details.baseValue, mergeValue)
+              Map packages = ManifestUtils.parsePackages(newValue)
+              String[] filters = ["cn.com.agree", "sun.net.spi.nameservice", "sun.awt.windows"]
+              packages = packages.findAll { !it.key.startsWith('cn.com.agree') && !it.key.startsWith('sun.net.spi.nameservice') && !it.key.startsWith('sun.awt.windows') }
+              newValue = ManifestUtils.packagesToString(packages)
               // if the user has specified specific eclipse imports, append them to the end
               if (!project.wuff.eclipseImports.isEmpty()) {
                 if (newValue.isEmpty()) {
@@ -207,7 +220,9 @@ class OsgiBundleConfigurer extends JavaConfigurer {
               }
             } else if(details.key.equalsIgnoreCase('Bundle-ClassPath')) {
               newValue = ManifestUtils.mergeClassPath(details.baseValue, mergeValue)
-            } else {
+            } else if(details.key.equalsIgnoreCase('Bundle-Version')) {
+              newValue = details.baseValue
+            }  else {
               newValue = mergeValue ?: details.baseValue
             }
             if(newValue) {
@@ -254,7 +269,7 @@ class OsgiBundleConfigurer extends JavaConfigurer {
     if(buildProperties) {
       // "plugin.xml" and "plugin_customization.ini" are not included,
       // because they are generated as extra-files in createExtraFiles.
-      def virtualResources = ['.', 'META-INF/', 'plugin.xml', 'plugin_customization.ini']
+      def virtualResources = ['.', 'META-INF/', 'plugin.xml', 'plugin_customization.ini', '*.properties', 'plugin*.*', '*.xml']
       buildProperties?.bin?.includes?.each { relPath ->
         if(!(relPath in virtualResources)) {
           effectiveResources.add(relPath)
