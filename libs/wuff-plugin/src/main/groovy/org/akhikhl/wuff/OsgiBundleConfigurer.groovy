@@ -207,8 +207,10 @@ class OsgiBundleConfigurer extends JavaConfigurer {
             } else if(details.key.equalsIgnoreCase('Import-Package')) {
               newValue = ManifestUtils.mergePackageList(details.baseValue, mergeValue)
               Map packages = ManifestUtils.parsePackages(newValue)
-              String[] filters = ["cn.com.agree", "sun.net.spi.nameservice", "sun.awt.windows"]
-              packages = packages.findAll { !it.key.startsWith('cn.com.agree') && !it.key.startsWith('sun.net.spi.nameservice') && !it.key.startsWith('sun.awt.windows') }
+              packages = packages.findAll {
+                it.key.startsWith('org.apache.log4j') ||
+                it.key.startsWith('cn.com.agree.ab.a4.pub.exception')
+              }
               newValue = ManifestUtils.packagesToString(packages)
               // if the user has specified specific eclipse imports, append them to the end
               if (!project.wuff.eclipseImports.isEmpty()) {
