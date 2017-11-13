@@ -56,7 +56,7 @@ class EquinoxAppConfigurer extends OsgiBundleConfigurer {
       group = 'wuff'
       description = 'prepares run configuration in buildDir/run'
       dependsOn project.tasks.jar
-      dependsOn project.tasks.wrapLibs
+//      dependsOn project.tasks.wrapLibs
       inputs.files { project.tasks.jar.archivePath }
       inputs.files { project.configurations.runtime - project.configurations.provided }
       outputs.files runConfigFile
@@ -205,7 +205,7 @@ class EquinoxAppConfigurer extends OsgiBundleConfigurer {
   @Override
   protected void configureTasks() {
     super.configureTasks()
-    configureTask_wrapLibs()
+//    configureTask_wrapLibs()
     configureRunTasks()
   }
 

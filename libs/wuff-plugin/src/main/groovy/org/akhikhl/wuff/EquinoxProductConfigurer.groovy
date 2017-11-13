@@ -113,7 +113,7 @@ class EquinoxProductConfigurer {
         description = "builds product for platform $platform and architecture $arch"
 
       dependsOn project.tasks.jar
-      dependsOn project.tasks.wrapLibs
+//      dependsOn project.tasks.wrapLibs
       project.tasks.build.dependsOn task
 
       inputs.files { project.tasks.jar.archivePath }
