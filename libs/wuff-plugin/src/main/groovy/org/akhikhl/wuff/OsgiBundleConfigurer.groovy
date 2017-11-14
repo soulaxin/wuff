@@ -158,7 +158,10 @@ class OsgiBundleConfigurer extends JavaConfigurer {
 
     project.tasks.jar { thisTask ->
 
-      project.setVersion(project.version.replace('-SNAPSHOT', snapshotQualifier))
+      // 兼容2.0.0-SNAPSHOT和vqualifier
+      def v = project.version.replace('-SNAPSHOT', snapshotQualifier) as String
+      v = v.replace('qualifier', snapshotQualifier.substring(1))
+      project.setVersion(v)
 
       dependsOn { project.tasks.createOsgiManifest }
 
