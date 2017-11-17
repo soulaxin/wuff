@@ -54,7 +54,7 @@ class PluginXmlBuilder {
       existingConfig?.children().each {
         XmlUtils.writeNode(xml, it)
       }
-      populate(xml)
+//      populate(xml)
     }
     return writer.toString()
   }
