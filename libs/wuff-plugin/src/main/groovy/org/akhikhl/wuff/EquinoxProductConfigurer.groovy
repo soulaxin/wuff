@@ -257,7 +257,7 @@ class EquinoxProductConfigurer {
           from file
           into new File(productOutputDir, 'plugins')
           // need to rename them to ensure that platform-specific launcher fragments are automatically found
-          if(file.name.startsWith(PluginUtils.equinoxLauncherPluginName))
+//          if(file.name.startsWith(PluginUtils.equinoxLauncherPluginName))
             rename PluginUtils.eclipsePluginMask, '$1_$2'
         }
       }
