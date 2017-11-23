@@ -33,7 +33,7 @@ class OsgiBundleConfigurer extends JavaConfigurer {
       current_os: PlatformConfig.current_os,
       current_arch: PlatformConfig.current_arch,
       current_language: PlatformConfig.current_language ]
-    snapshotQualifier = (new Date().format('YYYYMMddHHmm'))
+    snapshotQualifier = "." + (new Date().format('YYYYMMddHHmm'))
   }
 
   @Override
@@ -519,7 +519,7 @@ class OsgiBundleConfigurer extends JavaConfigurer {
 
   @Override
   protected String getDefaultVersion() {
-    (userManifest?.mainAttributes?.getValue('Bundle-Version') ?: '1.0.0.0').replace('qualifier', '-SNAPSHOT')
+    (userManifest?.mainAttributes?.getValue('Bundle-Version') ?: '1.0.0.0').replace('.qualifier', '-SNAPSHOT')
   }
 
   @Override
