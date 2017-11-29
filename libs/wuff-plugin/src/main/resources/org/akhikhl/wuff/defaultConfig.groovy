@@ -82,7 +82,7 @@ wuff {
 
             project.dependencies {
                 compile "${eclipseMavenGroup}:org.eclipse.core.runtime:+"
-                runtime "${eclipseMavenGroup}:org.eclipse.core.runtime.compatibility.registry:+"
+//                runtime "${eclipseMavenGroup}:org.eclipse.core.runtime.compatibility.registry:+"
                 compile "${eclipseMavenGroup}:org.eclipse.equinox.app:+"
                 runtime "${eclipseMavenGroup}:org.eclipse.equinox.ds:+"
                 runtime "${eclipseMavenGroup}:org.eclipse.equinox.event:+"
@@ -434,6 +434,26 @@ wuff {
             source "${eclipseMirror}/eclipse/downloads/drops4/R-4.5-201506032000/eclipse-SDK-4.5-${suffix_os[current_os]}${suffix_arch[current_arch]}.${fileExt_os[current_os]}", sourcesOnly: true
 
             languagePackTemplate '${eclipseMirror}/eclipse//technology/babel/babel_language_packs/R0.13.0/mars/BabelLanguagePack-eclipse-${language}_4.5.0.v20150804081228.zip'
+        }
+    }
+
+    eclipseVersion('4.7.1a') {
+
+        extendsFrom '4.5'
+
+        eclipseMavenGroup = 'eclipse-oxygen'
+
+        eclipseMirror = 'http://ftp.jaist.ac.jp/pub'
+
+        eclipseArchiveMirror = 'http://archive.eclipse.org'
+
+        sources {
+
+            source "${eclipseMirror}/eclipse//technology/epp/downloads/release/oxygen/1a/eclipse-jee-oxygen-1a-${suffix_os[current_os]}${suffix_arch[current_arch]}.${fileExt_os[current_os]}"
+            source "${eclipseArchiveMirror}/eclipse/downloads/drops4/R-4.7.1a-201710090410/eclipse-SDK-4.7.1a-${suffix_os[current_os]}${suffix_arch[current_arch]}.${fileExt_os[current_os]}", sourcesOnly: true
+            source "${eclipseArchiveMirror}/eclipse/downloads/drops4/R-4.4.2-201502041700/eclipse-4.4.2-delta-pack.zip"
+
+            languagePackTemplate '${eclipseMirror}/eclipse//technology/babel/babel_language_packs/R0.15.0/oxygen/BabelLanguagePack-eclipse-${language}_4.7.0.v20170819060001.zip'
         }
     }
 
