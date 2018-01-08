@@ -66,6 +66,22 @@ class OsgiBundleConfigurer extends JavaConfigurer {
         }
       }
     }
+    userManifest?.mainAttributes?.getValue('Fragment-Host')?.split(',')?.each { bundle ->
+      String bundleName
+      String bundleVersion
+      if(bundle.contains(';')) {
+        List bundleParams = bundle.split(';').toList()
+        bundleName = bundleParams[0]
+        bundleVersion = bundleParams.findResult {
+          def m = it =~ 'bundle-version="(.+)"'
+          if(m)
+            m[0][1]
+        }
+      } else
+        bundleName = bundle
+      addBundle bundleName, bundleVersion
+    }
+
     userManifest?.mainAttributes?.getValue('Require-Bundle')?.split(',')?.each { bundle ->
       String bundleName
       String bundleVersion
