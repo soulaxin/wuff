@@ -81,7 +81,26 @@ class OsgiBundleConfigurer extends JavaConfigurer {
         bundleName = bundle
       addBundle bundleName, bundleVersion
     }
-
+    userManifest?.mainAttributes?.getValue('Import-Package')?.split(',')?.each { bundle ->
+      String bundleName
+      String bundleVersion
+      if(bundle.contains(';')) {
+        List bundleParams = bundle.split(';').toList()
+        bundleName = bundleParams[0]
+        bundleVersion = bundleParams.findResult {
+          def m = it =~ 'bundle-version="(.+)"'
+          if(m)
+            m[0][1]
+        }
+      } else
+        bundleName = bundle
+        def proj = project.rootProject.subprojects.find {
+            it.ext.has('bundleSymbolicName') && it.ext.bundleSymbolicName == bundleName
+        }
+        if(proj) {
+            addBundle bundleName, bundleVersion
+        }
+    }
     userManifest?.mainAttributes?.getValue('Require-Bundle')?.split(',')?.each { bundle ->
       String bundleName
       String bundleVersion
@@ -222,23 +241,25 @@ class OsgiBundleConfigurer extends JavaConfigurer {
             if(details.key.equalsIgnoreCase('Require-Bundle')) {
               newValue = ManifestUtils.mergeRequireBundle(details.baseValue, mergeValue)
             } else if(details.key.equalsIgnoreCase('Export-Package')) {
-              newValue = ManifestUtils.mergePackageList(details.baseValue, mergeValue)
+//              newValue = ManifestUtils.mergePackageList(details.baseValue, mergeValue)
+              newValue = userManifest?.mainAttributes?.getValue('Export-Package')
             } else if(details.key.equalsIgnoreCase('Import-Package')) {
-              newValue = ManifestUtils.mergePackageList(details.baseValue, mergeValue)
-              Map packages = ManifestUtils.parsePackages(newValue)
-              packages = packages.findAll {
-                it.key.startsWith('org.apache.log4j') ||
-                it.key.startsWith('cn.com.agree.ab.a4.pub.exception')
-              }
-              newValue = ManifestUtils.packagesToString(packages)
-              // if the user has specified specific eclipse imports, append them to the end
-              if (!project.wuff.eclipseImports.isEmpty()) {
-                if (newValue.isEmpty()) {
-                  newValue = project.wuff.eclipseImports
-                } else {
-                  newValue = newValue + ',' +project.wuff.eclipseImports
-                }
-              }
+//              newValue = ManifestUtils.mergePackageList(details.baseValue, mergeValue)
+//              Map packages = ManifestUtils.parsePackages(newValue)
+//              packages = packages.findAll {
+//                it.key.startsWith('org.apache.log4j') ||
+//                it.key.startsWith('cn.com.agree.ab.a4.pub.exception')
+//              }
+//              newValue = ManifestUtils.packagesToString(packages)
+//              // if the user has specified specific eclipse imports, append them to the end
+//              if (!project.wuff.eclipseImports.isEmpty()) {
+//                if (newValue.isEmpty()) {
+//                  newValue = project.wuff.eclipseImports
+//                } else {
+//                  newValue = newValue + ',' +project.wuff.eclipseImports
+//                }
+//              }
+              newValue = userManifest?.mainAttributes?.getValue('Import-Package')
             } else if(details.key.equalsIgnoreCase('Bundle-ClassPath')) {
               newValue = ManifestUtils.mergeClassPath(details.baseValue, mergeValue)
             } else if(details.key.equalsIgnoreCase('Bundle-Version')) {
